@@ -896,6 +896,9 @@ func isFastForward(s storer.EncodedObjectStorer, old, new plumbing.Hash) (bool, 
 		found = true
 		return storer.ErrStop
 	})
+	if err == plumbing.ErrObjectNotFound {
+		return found, nil
+	}
 	return found, err
 }
 
