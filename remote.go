@@ -363,9 +363,10 @@ func (r *Remote) fetch(ctx context.Context, o *FetchOptions) (sto storer.Referen
 		if err != nil {
 			return nil, err
 		}
-
-		if err = r.fetchPack(ctx, o, s, req); err != nil {
-			return nil, err
+		if !req.IsEmpty() {
+			if err = r.fetchPack(ctx, o, s, req); err != nil {
+				return nil, err
+			}
 		}
 	}
 
@@ -727,6 +728,9 @@ func getHaves(
 		}
 
 		err = getHavesFromRef(ref, remoteRefs, s, haves)
+		if err == plumbing.ErrObjectNotFound {
+			continue
+		}
 		if err != nil {
 			return nil, err
 		}
